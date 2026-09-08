@@ -1,0 +1,1 @@
+export default function About(){return <main className="page"><div className="pill">About</div><h1>Green Basket Global Limited</h1><p className="muted">We help organizations access and manage the technology they need without carrying all of the technical burden themselves.</p></main>}
