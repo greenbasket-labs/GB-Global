@@ -1,0 +1,15 @@
+import {redirect} from 'next/navigation';
+import Link from 'next/link';
+import {getSessionUser} from '@/lib/auth';
+import {prisma} from '@/lib/prisma';
+
+export default async function CompanyOperations(){
+  const u=await getSessionUser();
+  if(!u||u.role!=='COMPANY_ADMIN') redirect('/login');
+  const [requestedServices,buildingApps,openTickets,pendingPartners]=await Promise.all([
+    prisma.clientService.findMany({where:{status:'REQUESTED'},include:{organization:true,service:true},orderBy:{createdAt:'desc'}}),
+    prisma.application.findMany({where:{status:{in:['BUILDING','DEGRADED']}},include:{organization:true},orderBy:{updatedAt:'desc'}}),
+    prisma.supportTicket.findMany({where:{status:{in:['OPEN','IN_PROGRESS']}},include:{organization:true,user:true},orderBy:{createdAt:'desc'}}),
+    prisma.partnerApplication.findMany({where:{status:'PENDING'},include:{user:true},orderBy:{createdAt:'asc'}})
+  ]);
+  return <main className="dashboard"><div className="pill">Company Control</div><h1>Operations</h1><p className="muted">One queue for work that needs Green Basket attention.</p><div className="dashnav"><Link href="/company">Overview</Link><Link href="/company/clients">Clients</Link><Link href="/company/partners">Partners</Link><Link href="/company/billing">Billing</Link><Link href="/company/operations">Operations</Link><Link href="/company/support">Support</Link></div><div className="stats"><div className="stat">Service requests<strong>{requestedServices.length}</strong></div><div className="stat">Active builds<strong>{buildingApps.length}</strong></div><div className="stat">Open support<strong>{openTickets.length}</strong></div><div className="stat">Partner reviews<strong>{pendingPartners.length}</strong></div></div><div className="grid"><div className="card"><h2>Service requests</h2>{requestedServices.length===0?<p className="muted">Nothing waiting.</p>:requestedServices.map(x=><div className="list-row" key={x.id}><strong>{x.service.name}</strong><span>{x.organization.name}</span></div>)}</div><div className="card"><h2>Application work</h2>{buildingApps.length===0?<p className="muted">No active application work.</p>:buildingApps.map(x=><div className="list-row" key={x.id}><strong>{x.name}</strong><span>{x.organization.name} · {x.status}</span></div>)}</div><div className="card"><h2>Support queue</h2>{openTickets.length===0?<p className="muted">Queue is clear.</p>:openTickets.slice(0,8).map(x=><div className="list-row" key={x.id}><strong>{x.subject}</strong><span>{x.organization?.name||x.user.email}</span></div>)}</div><div className="card"><h2>Partner reviews</h2>{pendingPartners.length===0?<p className="muted">No pending applications.</p>:pendingPartners.map(x=><div className="list-row" key={x.id}><strong>{x.user.name}</strong><span>{x.capabilities}</span></div>)}</div></div></main>
