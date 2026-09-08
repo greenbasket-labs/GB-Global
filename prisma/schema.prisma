@@ -60,6 +60,22 @@ enum TicketStatus {
   CLOSED
 }
 
+enum AssetType {
+  DOMAIN
+  HOSTING
+  SERVER
+  BACKUP
+  OTHER
+}
+
+enum AssetStatus {
+  ACTIVE
+  EXPIRING
+  EXPIRED
+  SUSPENDED
+  CANCELLED
+}
+
 model User {
   id                  String               @id @default(cuid())
   name                String
@@ -85,6 +101,7 @@ model Organization {
   applications    Application[]
   tickets         SupportTicket[]
   partnerClients  PartnerClient[]
+  assets          ServiceAsset[]
   createdAt       DateTime         @default(now())
   updatedAt       DateTime         @updatedAt
 }
@@ -131,6 +148,24 @@ model ClientService {
   updatedAt       DateTime     @updatedAt
 
   @@unique([organizationId, serviceId])
+}
+
+model ServiceAsset {
+  id             String      @id @default(cuid())
+  organizationId String
+  type           AssetType
+  name           String
+  provider       String?
+  status         AssetStatus @default(ACTIVE)
+  renewalDate    DateTime?
+  serviceUrl     String?
+  notes          String?
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  createdAt      DateTime    @default(now())
+  updatedAt      DateTime    @updatedAt
+
+  @@index([organizationId, type])
+  @@index([renewalDate])
 }
 
 model Application {
@@ -185,7 +220,7 @@ model PartnerClient {
   organizationId String
   partner        PartnerProfile @relation(fields: [partnerId], references: [id], onDelete: Cascade)
   organization   Organization   @relation(fields: [organizationId], references: [id], onDelete: Cascade)
-  createdAt      DateTime      @default(now())
+  createdAt      DateTime       @default(now())
 
   @@unique([partnerId, organizationId])
 }
