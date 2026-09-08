@@ -1,0 +1,15 @@
+import Link from 'next/link';
+import {notFound,redirect} from 'next/navigation';
+import {getSessionUser} from '@/lib/auth';
+import {prisma} from '@/lib/prisma';
+
+function money(kobo:number){return `₦${(kobo/100).toLocaleString('en-NG')}`}
+
+export default async function ClientDetail({params}:{params:Promise<{id:string}>}){
+  const u=await getSessionUser();
+  if(!u||!['COMPANY_ADMIN','COMPANY_STAFF'].includes(u.role))redirect('/login');
+  const {id}=await params;
+  const org=await prisma.organization.findUnique({where:{id},include:{owner:true,members:{include:{user:true}},services:{include:{service:true},orderBy:{createdAt:'desc'}},applications:{orderBy:{updatedAt:'desc'}},tickets:{orderBy:{createdAt:'desc'},take:10}}});
+  if(!org)notFound();
+  return <main className="dashboard"><div className="pill">Company • Client</div><div className="dashnav"><Link href="/company">Overview</Link><Link href="/company/clients">Clients</Link><Link href="/company/partners">Partners</Link><Link href="/company/services">Services</Link><Link href="/company/billing">Billing</Link><Link href="/company/operations">Operations</Link><Link href="/company/support">Support</Link><Link href="/company/control">Control</Link></div><div className="row"><div><h1>{org.name}</h1><p className="muted">Client organization · Owner: {org.owner.name} · {org.owner.email}</p></div><Link className="btn" href="/company/clients">Back to clients</Link></div><div className="stats"><div className="stat">Members<strong>{org.members.length}</strong></div><div className="stat">Services<strong>{org.services.length}</strong></div><div className="stat">Applications<strong>{org.applications.length}</strong></div><div className="stat">Tickets<strong>{org.tickets.filter(x=>x.status==='OPEN'||x.status==='IN_PROGRESS').length}</strong></div></div><div className="grid"><div className="card"><h2>Services</h2>{org.services.length?org.services.map(x=><div className="list-row" key={x.id}><div><strong>{x.service.name}</strong><p className="muted">{x.billingCycle.replace('_',' ')} · {money(x.priceKobo)}</p></div><span className="badge">{x.status}</span></div>):<p className="muted">No services yet.</p>}</div><div className="card"><h2>Applications</h2>{org.applications.length?org.applications.map(x=><div className="list-row" key={x.id}><strong>{x.name}</strong><span>{x.status}</span></div>):<p className="muted">No applications yet.</p>}</div><div className="card"><h2>Support</h2>{org.tickets.length?org.tickets.map(x=><div className="list-row" key={x.id}><strong>{x.subject}</strong><span>{x.status}</span></div>):<p className="muted">No support tickets.</p>}</div><div className="card"><h2>Members</h2>{org.members.map(m=><div className="list-row" key={m.id}><strong>{m.user.name}</strong><span>{m.role}</span></div>)}</div></div></main>
+}
