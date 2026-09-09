@@ -21,11 +21,13 @@ export async function POST(req:Request){
       const installmentIndex=Number(m.installmentIndex||0);
       const installmentCount=Number(m.installmentCount||0);
       if(projectId&&installmentIndex>0&&installmentIndex<installmentCount){
-        const next=await prisma.auditLog.findFirst({where:{entity:'Invoice',action:'INVOICE_CREATED',metadata:{path:['projectId'],equals:projectId}},orderBy:{createdAt:'asc'},skip:installmentIndex,take:1});
-        if(next){
-          const nm=(next.metadata||{}) as Record<string,unknown>;
-          const nextNumber=String(nm.invoiceNumber||'');
+        const next=await prisma.auditLog.findMany({where:{entity:'Invoice',action:'INVOICE_CREATED'},orderBy:{createdAt:'asc'},take:500});
+        const matching=next.map(x=>({x,m:(x.metadata||{}) as Record<string,unknown>})).filter(v=>v.m.projectId===projectId&&Number(v.m.installmentIndex)===installmentIndex+1)[0];
+        if(matching){
+          const nextNumber=String(matching.m.invoiceNumber||'');
           if(nextNumber)await prisma.auditLog.create({data:{actorId:u.id,action:'INVOICE_STATUS_CHANGED',entity:'Invoice',entityId:nextNumber,metadata:{invoiceNumber:nextNumber,status:'ISSUED',changedAt:new Date().toISOString()}}});
+          await prisma.milestone.updateMany({where:{projectId,sequence:installmentIndex+1,status:'LOCKED'},data:{status:'AVAILABLE'}});
+          await prisma.milestone.updateMany({where:{projectId,sequence:installmentIndex,status:{in:['AVAILABLE','IN_PROGRESS','SUBMITTED','APPROVED']}},data:{status:'COMPLETED'}});
         }
       }
     }
@@ -43,20 +45,23 @@ export async function POST(req:Request){
   if(Number.isNaN(due.getTime()))return NextResponse.json({error:'Invalid due date.'},{status:400});
   const org=await prisma.organization.findUnique({where:{id:organizationId},select:{id:true}});
   if(!org)return NextResponse.json({error:'Organization not found.'},{status:404});
+  let billingCycle:'ONE_TIME'|'MONTHLY'|'YEARLY'|'USAGE'='ONE_TIME';
   if(clientServiceId){
     const service=await prisma.clientService.findFirst({where:{id:clientServiceId,organizationId},select:{id:true,billingCycle:true}});
     if(!service)return NextResponse.json({error:'Selected service does not belong to this organization.'},{status:400});
-    if(installmentCount>1&&service.billingCycle!=='ONE_TIME')return NextResponse.json({error:'Installment plans are available only for one-time services.'},{status:400});
+    billingCycle=service.billingCycle;
+    if(installmentCount>1&&billingCycle!=='ONE_TIME')return NextResponse.json({error:'Installment plans are available only for one-time services.'},{status:400});
   }
-  const projectId=installmentCount>1?`project-${makeNumber()}`:null;
+  const project=installmentCount>1?await prisma.project.create({data:{organizationId,clientServiceId:clientServiceId||null,title:description||'Client project',description,totalAmountKobo:amountKobo,installmentCount,status:'PLANNED'}}):null;
   const base=Math.floor(amountKobo/installmentCount);
   const remainder=amountKobo-(base*installmentCount);
   const now=new Date();
   for(let i=1;i<=installmentCount;i++){
     const installmentAmount=base+(i===installmentCount?remainder:0);
     const number=makeNumber();
-    const invoice={invoiceNumber:number,organizationId,clientServiceId:clientServiceId||null,description:installmentCount>1?`${description} — Milestone ${i} of ${installmentCount}`:description,amountKobo:installmentAmount,status:i===1?'ISSUED':'SCHEDULED',dueDate:new Date(due.getTime()+((i-1)*30*24*60*60*1000)).toISOString(),createdAt:now.toISOString(),projectId,installmentIndex:i,installmentCount};
+    const invoice={invoiceNumber:number,organizationId,clientServiceId:clientServiceId||null,description:installmentCount>1?`${description} — Milestone ${i} of ${installmentCount}`:description,amountKobo:installmentAmount,status:i===1?'ISSUED':'SCHEDULED',dueDate:new Date(due.getTime()+((i-1)*30*24*60*60*1000)).toISOString(),createdAt:now.toISOString(),projectId:project?.id||null,installmentIndex:i,installmentCount};
     await prisma.auditLog.create({data:{actorId:u.id,action:'INVOICE_CREATED',entity:'Invoice',entityId:number,metadata:invoice}});
+    if(project)await prisma.milestone.create({data:{projectId:project.id,sequence:i,title:`Milestone ${i} of ${installmentCount}`,description:`Deliverables for ${description}`,amountKobo:installmentAmount,status:i===1?'AVAILABLE':'LOCKED'}});
   }
   return NextResponse.redirect(new URL('/company/billing',req.url));
 }
