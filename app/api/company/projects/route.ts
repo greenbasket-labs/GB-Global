@@ -2,47 +2,7 @@ import {NextResponse} from 'next/server';
 import {getSessionUser} from '@/lib/auth';
 import {prisma} from '@/lib/prisma';
 
-export async function POST(req:Request){
-  const u=await getSessionUser();
-  if(!u||!['COMPANY_ADMIN','COMPANY_STAFF'].includes(u.role)) return NextResponse.json({error:'Unauthorized'},{status:401});
-  try{
-    const body=await req.json();
-    const action=String(body.action||'');
-    const milestoneId=String(body.milestoneId||'');
-    if(!milestoneId) return NextResponse.json({error:'Milestone is required'},{status:400});
-
-    if(action==='assign'){
-      const partnerId=String(body.partnerId||'');
-      if(!partnerId) return NextResponse.json({error:'Partner is required'},{status:400});
-      const milestone=await prisma.milestone.findUnique({where:{id:milestoneId},include:{project:true}});
-      if(!milestone) return NextResponse.json({error:'Milestone not found'},{status:404});
-      const partner=await prisma.partnerProfile.findFirst({where:{id:partnerId,status:'APPROVED'},include:{user:true}});
-      if(!partner) return NextResponse.json({error:'Partner is not approved'},{status:400});
-      const work=await prisma.partnerWork.create({data:{partnerId,title:milestone.title,description:milestone.description,status:'ASSIGNED'}});
-      await prisma.milestone.update({where:{id:milestoneId},data:{partnerWorkId:work.id}});
-      return NextResponse.json({ok:true});
-    }
-
-    if(action==='review'){
-      const decision=String(body.decision||'');
-      const milestone=await prisma.milestone.findUnique({where:{id:milestoneId},include:{project:true}});
-      if(!milestone) return NextResponse.json({error:'Milestone not found'},{status:404});
-      if(milestone.status!=='SUBMITTED') return NextResponse.json({error:'Only submitted proof can be reviewed'},{status:400});
-      if(decision==='reject'){
-        await prisma.milestone.update({where:{id:milestoneId},data:{status:'REJECTED',reviewedAt:new Date(),reviewedById:u.id}});
-        return NextResponse.json({ok:true});
-      }
-      if(decision==='approve'){
-        await prisma.milestone.update({where:{id:milestoneId},data:{status:'APPROVED',reviewedAt:new Date(),reviewedById:u.id}});
-        const paid=await prisma.auditLog.findFirst({where:{action:'INVOICE_STATUS_CHANGED',entity:'Invoice',metadata:{contains:milestone.sequence.toString()}}});
-        void paid;
-        return NextResponse.json({ok:true});
-      }
-      return NextResponse.json({error:'Invalid decision'},{status:400});
-    }
-    return NextResponse.json({error:'Invalid action'},{status:400});
-  }catch(e){
-    console.error(e);
-    return NextResponse.json({error:'Request failed'},{status:500});
-  }
-}
+const staff=['COMPANY_ADMIN','COMPANY_STAFF'];
+async function invoiceIsPaid(projectId:string,sequence:number){const created=await prisma.auditLog.findMany({where:{entity:'Invoice',action:'INVOICE_CREATED'},orderBy:{createdAt:'desc'},take:500});const match=created.find(x=>{const m=(x.metadata||{}) as Record<string,unknown>;return m.projectId===projectId&&Number(m.installmentIndex)===sequence;});if(!match)return false;const latest=await prisma.auditLog.findFirst({where:{entity:'Invoice',action:'INVOICE_STATUS_CHANGED',entityId:match.entityId},orderBy:{createdAt:'desc'}});return ((latest?.metadata||{}) as Record<string,unknown>).status==='PAID';}
+async function unlockNextIfReady(projectId:string,sequence:number){if(!(await invoiceIsPaid(projectId,sequence)))return;const current=await prisma.milestone.findUnique({where:{projectId_sequence:{projectId,sequence}},select:{status:true}});if(current?.status!=='APPROVED'&&current?.status!=='COMPLETED')return;await prisma.milestone.updateMany({where:{projectId,sequence,status:'APPROVED'},data:{status:'COMPLETED'}});await prisma.milestone.updateMany({where:{projectId,sequence:sequence+1,status:'LOCKED'},data:{status:'AVAILABLE'}});}
+export async function POST(req:Request){const u=await getSessionUser();if(!u||!staff.includes(u.role))return NextResponse.json({error:'Unauthorized'},{status:401});try{const body=await req.json();const action=String(body.action||'');const milestoneId=String(body.milestoneId||'');if(!milestoneId)return NextResponse.json({error:'Milestone is required'},{status:400});const milestone=await prisma.milestone.findUnique({where:{id:milestoneId},include:{project:true}});if(!milestone)return NextResponse.json({error:'Milestone not found'},{status:404});if(action==='assign'){const partnerId=String(body.partnerId||'');if(!partnerId)return NextResponse.json({error:'Partner is required'},{status:400});if(milestone.status==='LOCKED')return NextResponse.json({error:'Milestone is locked until the previous installment is completed.'},{status:400});if(milestone.partnerWorkId)return NextResponse.json({error:'Milestone is already assigned.'},{status:400});const partner=await prisma.partnerProfile.findFirst({where:{id:partnerId,status:'APPROVED'}});if(!partner)return NextResponse.json({error:'Partner is not approved'},{status:400});const work=await prisma.partnerWork.create({data:{partnerId,title:milestone.title,description:milestone.description,status:'ASSIGNED'}});await prisma.milestone.update({where:{id:milestoneId},data:{partnerWorkId:work.id}});return NextResponse.redirect(new URL('/company/projects',req.url));}if(action==='review'){const decision=String(body.decision||'');if(milestone.status!=='SUBMITTED')return NextResponse.json({error:'Only submitted proof can be reviewed'},{status:400});if(decision==='reject')await prisma.milestone.update({where:{id:milestoneId},data:{status:'REJECTED',reviewedAt:new Date(),reviewedById:u.id}});else if(decision==='approve'){await prisma.milestone.update({where:{id:milestoneId},data:{status:'APPROVED',reviewedAt:new Date(),reviewedById:u.id}});await unlockNextIfReady(milestone.projectId,milestone.sequence);}else return NextResponse.json({error:'Invalid decision'},{status:400});return NextResponse.redirect(new URL('/company/projects',req.url));}return NextResponse.json({error:'Invalid action'},{status:400});}catch(e){console.error(e);return NextResponse.json({error:'Request failed'},{status:500});}}
