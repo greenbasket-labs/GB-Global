@@ -18,11 +18,19 @@ export async function POST(req:Request){
   }
   const organizationId=String(f.get('organizationId')||'');
   const clientServiceId=String(f.get('clientServiceId')||'');
-  const description=String(f.get('description')||'Service charge');
+  const description=String(f.get('description')||'Service charge').trim();
   const amountKobo=Number(f.get('amountKobo')||0);
   const dueDate=String(f.get('dueDate')||'');
-  if(!organizationId||amountKobo<=0||!dueDate)return NextResponse.json({error:'Organization, positive amount and due date are required.'},{status:400});
-  const invoice={invoiceNumber:makeNumber(),organizationId,clientServiceId:clientServiceId||null,description,amountKobo,status:'ISSUED',dueDate,createdAt:new Date().toISOString()};
+  if(!organizationId||amountKobo<=0||!Number.isInteger(amountKobo)||!dueDate)return NextResponse.json({error:'Organization, positive whole-kobo amount and due date are required.'},{status:400});
+  const due=new Date(dueDate);
+  if(Number.isNaN(due.getTime()))return NextResponse.json({error:'Invalid due date.'},{status:400});
+  const org=await prisma.organization.findUnique({where:{id:organizationId},select:{id:true}});
+  if(!org)return NextResponse.json({error:'Organization not found.'},{status:404});
+  if(clientServiceId){
+    const service=await prisma.clientService.findFirst({where:{id:clientServiceId,organizationId},select:{id:true}});
+    if(!service)return NextResponse.json({error:'Selected service does not belong to this organization.'},{status:400});
+  }
+  const invoice={invoiceNumber:makeNumber(),organizationId,clientServiceId:clientServiceId||null,description:description||'Service charge',amountKobo,status:'ISSUED',dueDate:due.toISOString(),createdAt:new Date().toISOString()};
   await prisma.auditLog.create({data:{actorId:u.id,action:'INVOICE_CREATED',entity:'Invoice',entityId:invoice.invoiceNumber,metadata:invoice}});
   return NextResponse.redirect(new URL('/company/billing',req.url));
 }
