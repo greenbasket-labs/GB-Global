@@ -1,9 +1,9 @@
 "use client";
 
-import {useState} from 'react';
-import {useRouter,useSearchParams} from 'next/navigation';
+import {Suspense, useState} from 'react';
+import {useRouter, useSearchParams} from 'next/navigation';
 
-export default function VerifyEmail(){
+function VerifyEmailForm(){
   const params=useSearchParams();
   const router=useRouter();
   const initial=params.get('email')||'';
@@ -37,4 +37,8 @@ export default function VerifyEmail(){
   }
 
   return <main className="page auth"><div className="pill">Email verification</div><h1>Verify your email.</h1><p>We sent a 6-digit verification code to <strong>{email||'your email address'}</strong>.</p>{error&&<div className="error">{error}</div>}{message&&<div className="success">{message}</div>}<form className="form" onSubmit={verify}><label>Verification code<input required inputMode="numeric" pattern="[0-9]{6}" maxLength={6} value={code} onChange={e=>setCode(e.target.value.replace(/\D/g,''))} autoComplete="one-time-code" placeholder="123456"/></label><button className="btn" disabled={busy}>{busy?'Verifying…':'Verify Email'}</button></form><button className="link-button" type="button" onClick={resend} disabled={resending}>{resending?'Sending…':'Resend code'}</button><p className="muted">Codes expire after 10 minutes. You can request another code after the cooldown period.</p></main>;
+}
+
+export default function VerifyEmail(){
+  return <Suspense fallback={<main className="page auth"><div className="pill">Email verification</div><h1>Verify your email.</h1><p>Loading verification form…</p></main>}><VerifyEmailForm/></Suspense>;
 }
