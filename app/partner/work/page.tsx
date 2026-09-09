@@ -20,7 +20,7 @@ export default async function Work(){
       {p.work.length?p.work.map(w=><div className="card" key={w.id}>
         <div className="row"><div><h2>{w.title}</h2><p className="muted">{w.description||'No description.'}</p></div><span className="badge">{w.status}</span></div>
         <div className="stack">
-          {w.milestones.map(m=>{const review=reviewFor(m.id);const meta=(review?.metadata||{}) as Record<string,unknown>;return <div className="card milestone-card" key={m.id}>
+          {w.milestones.map(m=>{const review=reviewFor(m.id);const raw=review?.metadata;const meta=(raw&&typeof raw==='object'&&!Array.isArray(raw)?raw:{}) as Record<string,unknown>;return <div className="card milestone-card" key={m.id}>
             <div className="row"><div><strong>{m.sequence}. {m.title}</strong><p className="muted">{m.project.organization.name} · {m.status}</p><p>{m.description||'No milestone description.'}</p></div><span className="badge">{m.status}</span></div>
             {m.status==='AVAILABLE'&&<form action="/api/partner/milestones" method="post"><input type="hidden" name="action" value="start"/><input type="hidden" name="milestoneId" value={m.id}/><button className="btn" type="submit">Start milestone</button></form>}
             {m.status==='REJECTED'&&<div className="proof-card"><strong>Changes requested</strong>{typeof meta.reviewNote==='string'&&meta.reviewNote&&<p>{meta.reviewNote}</p>}<form action="/api/partner/milestones" method="post"><input type="hidden" name="action" value="start"/><input type="hidden" name="milestoneId" value={m.id}/><button className="btn" type="submit">Work on changes</button></form></div>}
