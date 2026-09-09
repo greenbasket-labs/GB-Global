@@ -4,15 +4,26 @@ import {prisma} from '@/lib/prisma';
 
 const staff=['COMPANY_ADMIN','COMPANY_STAFF'];
 
+async function readBody(req:Request){
+  const type=req.headers.get('content-type')||'';
+  if(type.includes('multipart/form-data')||type.includes('application/x-www-form-urlencoded')){
+    const f=await req.formData();
+    return Object.fromEntries([...f.entries()].map(([k,v])=>[k,String(v)]));
+  }
+  return req.json();
+}
+
 export async function POST(req:Request){
   const u=await getSessionUser();
   if(!u||!staff.includes(u.role))return NextResponse.json({error:'Unauthorized'},{status:401});
-  const body=await req.json();
+  const body=await readBody(req);
   const {organizationId,type,name,provider,status,renewalDate,serviceUrl,notes}=body;
   if(!organizationId||!type||!name)return NextResponse.json({error:'organizationId, type and name are required'},{status:400});
+  const org=await prisma.organization.findUnique({where:{id:organizationId},select:{id:true}});
+  if(!org)return NextResponse.json({error:'Organization not found.'},{status:404});
   const asset=await prisma.serviceAsset.create({data:{organizationId,type,name,provider:provider||null,status:status||'ACTIVE',renewalDate:renewalDate?new Date(renewalDate):null,serviceUrl:serviceUrl||null,notes:notes||null}});
   await prisma.auditLog.create({data:{actorId:u.id,action:'ASSET_CREATED',entity:'ServiceAsset',entityId:asset.id,metadata:{organizationId,type,name}}});
-  return NextResponse.json({ok:true,asset});
+  return req.headers.get('accept')?.includes('text/html')?NextResponse.redirect(new URL(`/company/clients/${organizationId}/assets`,req.url)):NextResponse.json({ok:true,asset});
 }
 
 export async function PATCH(req:Request){
