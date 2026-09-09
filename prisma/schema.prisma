@@ -80,6 +80,8 @@ model User {
   id                  String               @id @default(cuid())
   name                String
   email               String               @unique
+  phone               String?
+  emailVerifiedAt     DateTime?
   passwordHash        String
   role                UserRole             @default(CLIENT)
   organizations       OrganizationMember[]
@@ -87,8 +89,27 @@ model User {
   partner             PartnerProfile?
   partnerApplication  PartnerApplication?
   supportTickets      SupportTicket[]
+  verificationCodes   EmailVerificationCode[]
   createdAt           DateTime             @default(now())
   updatedAt           DateTime             @updatedAt
+}
+
+model EmailVerificationCode {
+  id         String    @id @default(cuid())
+  userId     String
+  email      String
+  codeHash   String
+  expiresAt  DateTime
+  attempts   Int       @default(0)
+  sentAt     DateTime  @default(now())
+  usedAt     DateTime?
+  requestIp  String?
+  user       User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt  DateTime  @default(now())
+
+  @@index([email, createdAt])
+  @@index([requestIp, createdAt])
+  @@index([userId, createdAt])
 }
 
 model Organization {
@@ -127,7 +148,7 @@ model Service {
   active          Boolean         @default(true)
   oneTimePriceKobo Int            @default(0)
   monthlyPriceKobo Int            @default(0)
-  yearlyPriceKobo  Int            @default(0)
+  yearlyPriceKobo  Int             @default(0)
   clientServices  ClientService[]
   createdAt       DateTime        @default(now())
   updatedAt       DateTime        @updatedAt
