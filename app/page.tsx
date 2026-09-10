@@ -1,14 +1,5 @@
 import Link from "next/link";
 
-const services = [
-  ["Software", "Business systems, websites and custom applications.", "01"],
-  ["Hosting", "Managed hosting and application infrastructure.", "02"],
-  ["Domains", "Domain registration, DNS and renewal management.", "03"],
-  ["Technical Support", "Maintenance, monitoring, troubleshooting and updates.", "04"],
-  ["Digital Growth", "Marketing and other digital services through our network.", "05"],
-  ["Technology Management", "One place to organize the technology your organization depends on.", "06"],
-];
-
 export default function Home() {
   return (
     <main>
@@ -16,26 +7,24 @@ export default function Home() {
         <div className="hero-inner">
           <div className="hero-copy">
             <div className="eyebrow">Green Basket Global Limited</div>
-            <h1>Your digital work, <span>handled.</span></h1>
-            <p className="hero-lead">
-              We help businesses get the software, hosting, domains, technical support and digital services they need — without making technology their daily problem.
-            </p>
+            <h1>Digital solutions for <span>schools.</span></h1>
+            <p className="hero-lead">Green Basket currently focuses on one core product: a school management system that helps private schools organize their digital operations in one place.</p>
             <div className="actions">
               <Link className="btn" href="/register">Get Started <span>→</span></Link>
-              <Link className="btn alt" href="/services">Explore Services</Link>
+              <Link className="btn alt" href="/services">View Service</Link>
             </div>
-            <p className="coverage">Serving businesses across Nigeria and Africa.</p>
+            <p className="coverage">Focused on schools today. More digital services can be added in the future.</p>
           </div>
           <div className="hero-visual" aria-hidden="true">
             <div className="hero-orb orb-one" />
             <div className="hero-orb orb-two" />
             <div className="service-panel">
               <div className="panel-top"><span>GREEN BASKET</span><span className="panel-dot" /></div>
-              <div className="panel-title">Your digital operations</div>
-              <div className="panel-row"><span>Software</span><b>Managed</b></div>
-              <div className="panel-row"><span>Infrastructure</span><b>Active</b></div>
-              <div className="panel-row"><span>Support</span><b>Available</b></div>
-              <div className="panel-footer">One company. One place. Less to worry about.</div>
+              <div className="panel-title">School Management</div>
+              <div className="panel-row"><span>Students</span><b>Managed</b></div>
+              <div className="panel-row"><span>Academics</span><b>Organized</b></div>
+              <div className="panel-row"><span>School Operations</span><b>Connected</b></div>
+              <div className="panel-footer">One school system. One place. Less to worry about.</div>
             </div>
           </div>
         </div>
@@ -43,19 +32,17 @@ export default function Home() {
 
       <section className="section service-section">
         <div className="section-heading">
-          <div className="pill">What we handle</div>
-          <h2>One company for your digital needs.</h2>
-          <p className="muted">Start with what you need. Add services as your organization grows.</p>
+          <div className="pill">Our current service</div>
+          <h2>School Management System.</h2>
+          <p className="muted">One focused digital product, supported by Green Basket from setup through ongoing use.</p>
         </div>
         <div className="grid service-grid">
-          {services.map(([name, description, number]) => (
-            <div className="card service-card" key={name}>
-              <div className="service-number">{number}</div>
-              <h3>{name}</h3>
-              <p className="muted">{description}</p>
-              <Link href="/services">Learn more <span>→</span></Link>
-            </div>
-          ))}
+          <div className="card service-card">
+            <div className="service-number">01</div>
+            <h3>School Management System</h3>
+            <p className="muted">A practical platform for managing the academic and administrative work of a private school.</p>
+            <Link href="/services">Learn more <span>→</span></Link>
+          </div>
         </div>
       </section>
 
@@ -64,8 +51,8 @@ export default function Home() {
           <div className="pill">Simple by design</div>
           <div className="trust-content">
             <div>
-              <h2>You tell us what you need. We organize the work.</h2>
-              <p className="muted">Green Basket coordinates the right specialists and manages the ongoing digital services your organization depends on.</p>
+              <h2>One product today. A platform ready for tomorrow.</h2>
+              <p className="muted">Green Basket keeps the foundation flexible so additional digital services can be introduced later without changing the core platform.</p>
             </div>
             <Link className="btn" href="/how-it-works">See how it works <span>→</span></Link>
           </div>
@@ -75,9 +62,9 @@ export default function Home() {
       <section className="section closing-section">
         <div className="closing-card">
           <div>
-            <div className="pill">Ready when you are</div>
-            <h2>Let&apos;s take technology off your plate.</h2>
-            <p className="muted">Tell us what your business needs. We&apos;ll help organize the next step.</p>
+            <div className="pill">For private schools</div>
+            <h2>Ready to bring your school into one place?</h2>
+            <p className="muted">Create an account and tell Green Basket about your school.</p>
           </div>
           <Link className="btn" href="/register">Get Started <span>→</span></Link>
         </div>
