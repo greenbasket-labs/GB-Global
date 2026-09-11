@@ -104,7 +104,7 @@ model User {
   passwordHash        String
   role                UserRole             @default(CLIENT)
   cacNumberEncrypted  String?
-  cacNumberHash       String?              @unique
+  cacNumberHash       String?
   organizations       OrganizationMember[]
   ownedOrganizations  Organization[]       @relation("OrganizationOwner")
   partner             PartnerProfile?
@@ -169,7 +169,7 @@ model Service {
   category        ServiceCategory
   active          Boolean         @default(true)
   oneTimePriceKobo Int            @default(0)
-  monthlyPriceKobo Int             @default(0)
+  monthlyPriceKobo Int            @default(0)
   yearlyPriceKobo  Int             @default(0)
   clientServices  ClientService[]
   createdAt       DateTime        @default(now())
@@ -230,11 +230,11 @@ model PartnerProfile {
   status        PartnerStatus       @default(PENDING)
   bio           String?
   capabilities PartnerCapability[]
-  clients       PartnerClient[]
+  clients      PartnerClient[]
   work         PartnerWork[]
   user         User                @relation(fields: [userId], references: [id], onDelete: Cascade)
-  createdAt    DateTime            @default(now())
-  updatedAt    DateTime            @updatedAt
+  createdAt    DateTime             @default(now())
+  updatedAt    DateTime             @updatedAt
 }
 
 model PartnerCapability {
@@ -289,7 +289,7 @@ model Project {
   description    String?
   totalAmountKobo Int           @default(0)
   installmentCount Int           @default(1)
-  status          ProjectStatus  @default(PLANNED)
+  status         ProjectStatus  @default(PLANNED)
   organization   Organization   @relation(fields: [organizationId], references: [id], onDelete: Cascade)
   clientService  ClientService? @relation(fields: [clientServiceId], references: [id], onDelete: SetNull)
   milestones     Milestone[]
@@ -314,7 +314,7 @@ model Milestone {
   reviewedAt    DateTime?
   reviewedById  String?
   project       Project         @relation(fields: [projectId], references: [id], onDelete: Cascade)
-  partnerWork  PartnerWork?    @relation(fields: [partnerWorkId], references: [id], onDelete: SetNull)
+  partnerWork   PartnerWork?    @relation(fields: [partnerWorkId], references: [id], onDelete: SetNull)
   createdAt     DateTime        @default(now())
   updatedAt     DateTime        @updatedAt
 
