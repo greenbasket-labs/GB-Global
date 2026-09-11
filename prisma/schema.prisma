@@ -103,13 +103,15 @@ model User {
   emailVerifiedAt     DateTime?
   passwordHash        String
   role                UserRole             @default(CLIENT)
+  cacNumberEncrypted  String?
+  cacNumberHash       String?              @unique
   organizations       OrganizationMember[]
   ownedOrganizations  Organization[]       @relation("OrganizationOwner")
   partner             PartnerProfile?
   partnerApplication  PartnerApplication?
   supportTickets      SupportTicket[]
   verificationCodes   EmailVerificationCode[]
-  createdAt           DateTime             @default(now())
+  createdAt            DateTime             @default(now())
   updatedAt            DateTime             @updatedAt
 }
 
@@ -225,10 +227,10 @@ model Application {
 model PartnerProfile {
   id           String              @id @default(cuid())
   userId       String              @unique
-  status       PartnerStatus       @default(PENDING)
-  bio          String?
+  status        PartnerStatus       @default(PENDING)
+  bio           String?
   capabilities PartnerCapability[]
-  clients      PartnerClient[]
+  clients       PartnerClient[]
   work         PartnerWork[]
   user         User                @relation(fields: [userId], references: [id], onDelete: Cascade)
   createdAt    DateTime            @default(now())
@@ -276,7 +278,7 @@ model PartnerWork {
   partner     PartnerProfile @relation(fields: [partnerId], references: [id], onDelete: Cascade)
   milestones  Milestone[]
   createdAt   DateTime       @default(now())
-  updatedAt  DateTime        @updatedAt
+  updatedAt   DateTime       @updatedAt
 }
 
 model Project {
@@ -286,8 +288,8 @@ model Project {
   title          String
   description    String?
   totalAmountKobo Int           @default(0)
-  installmentCount Int          @default(1)
-  status         ProjectStatus  @default(PLANNED)
+  installmentCount Int           @default(1)
+  status          ProjectStatus  @default(PLANNED)
   organization   Organization   @relation(fields: [organizationId], references: [id], onDelete: Cascade)
   clientService  ClientService? @relation(fields: [clientServiceId], references: [id], onDelete: SetNull)
   milestones     Milestone[]
