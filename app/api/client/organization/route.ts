@@ -20,7 +20,7 @@ export async function POST(req:Request){
     if(name.length>=2&&cacNumber.length>=2){
       const cacHash=hashCacNumber(cacNumber);
       if(u.cacNumberHash&&u.cacNumberHash!==cacHash)return NextResponse.redirect(new URL('/client/account?error=cac-mismatch',req.url));
-      const existing=await prisma.user.findUnique({where:{cacNumberHash:cacHash},select:{id:true}});
+      const existing=await prisma.user.findFirst({where:{cacNumberHash:cacHash},select:{id:true}});
       if(existing&&existing.id!==u.id)return NextResponse.redirect(new URL('/client/account?error=cac-used',req.url));
       const org=await createClientOrganization(u.id,name);
       await prisma.user.update({where:{id:u.id},data:{cacNumberHash:cacHash,cacNumberEncrypted:u.cacNumberEncrypted||encryptCacNumber(cacNumber)}});
