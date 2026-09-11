@@ -1,4 +1,9 @@
-import { createCipheriv, createDecipheriv, createHmac } from "crypto";
+import {
+  createCipheriv,
+  createDecipheriv,
+  createHmac,
+  randomBytes,
+} from "crypto";
 
 const ALGORITHM = "aes-256-gcm";
 const KEY_BYTES = 32;
@@ -30,7 +35,7 @@ export function hashCacNumber(value: string): string {
 }
 
 export function encryptCacNumber(value: string): string {
-  const iv = Buffer.from(require("crypto").randomBytes(12));
+  const iv = randomBytes(12);
   const cipher = createCipheriv(ALGORITHM, getKey(), iv);
   const encrypted = Buffer.concat([
     cipher.update(normalizeCacNumber(value), "utf8"),
