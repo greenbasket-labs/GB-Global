@@ -10,10 +10,10 @@ export default function Home() {
             <h1>Digital solutions for <span>schools.</span></h1>
             <p className="hero-lead">Green Basket currently focuses on one core product: a school management system that helps private schools organize their digital operations in one place.</p>
             <div className="actions">
-              <Link className="btn" href="/register">Get Started <span>→</span></Link>
-              <Link className="btn alt" href="/services">View Service</Link>
+              <Link className="btn" href="/demo">Try Demo <span>→</span></Link>
+              <Link className="btn alt" href="/register">Get Started</Link>
             </div>
-            <p className="coverage">Focused on schools today. More digital services can be added in the future.</p>
+            <p className="coverage">Explore the demo first, or create an account when you are ready to bring your own school onto the platform.</p>
           </div>
           <div className="hero-visual" aria-hidden="true">
             <div className="hero-orb orb-one" />
@@ -41,7 +41,7 @@ export default function Home() {
             <div className="service-number">01</div>
             <h3>School Management System</h3>
             <p className="muted">A practical platform for managing the academic and administrative work of a private school.</p>
-            <Link href="/services">Learn more <span>→</span></Link>
+            <Link href="/demo">See the demo <span>→</span></Link>
           </div>
         </div>
       </section>
