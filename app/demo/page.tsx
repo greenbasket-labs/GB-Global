@@ -1,6 +1,8 @@
 import Link from "next/link";
 
-const demoUrl = process.env.NEXT_PUBLIC_SCHOOL_DEMO_URL?.trim();
+const demoUrl =
+  process.env.NEXT_PUBLIC_SCHOOL_DEMO_URL?.trim() ||
+  "https://gb-demo-school.onrender.com";
 
 export default function DemoPage() {
   return (
@@ -21,13 +23,9 @@ export default function DemoPage() {
             students, classes, staff, attendance, fees, payments, exams,
             results, announcements and portals.
           </p>
-          {demoUrl ? (
-            <a className="btn" href={demoUrl} target="_blank" rel="noreferrer">
-              Enter demo <span>→</span>
-            </a>
-          ) : (
-            <p className="muted">The demo environment is being connected.</p>
-          )}
+          <a className="btn" href={demoUrl} target="_blank" rel="noreferrer">
+            Enter demo <span>→</span>
+          </a>
         </div>
 
         <div className="card service-card">
