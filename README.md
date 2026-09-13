@@ -26,6 +26,7 @@ Copy `.env.example` to `.env` and set:
 - `DATABASE_URL` — PostgreSQL connection string
 - `SESSION_SECRET` — long random secret for session signing
 - `ADMIN_EMAIL`, `ADMIN_NAME`, `ADMIN_PASSWORD` — used when creating the first company admin
+- `NEXT_PUBLIC_SCHOOL_DEMO_URL` — optional school-system URL used by the public demo page; the live school URL is used as a fallback
 
 Never commit `.env` or real credentials.
 
@@ -76,6 +77,10 @@ For a first deployment on a managed platform such as Render:
 8. Run `npm run admin:create` once with the production admin environment variables.
 
 Do not put production credentials in GitHub source files.
+
+## School system demo
+
+The public school-system entry uses `NEXT_PUBLIC_SCHOOL_DEMO_URL` when configured. If the variable is unavailable during a production build, the company site falls back to the live reference school at `https://gb-demo-school.onrender.com`, so the Enter Demo action remains usable.
 
 ## V1 areas
 
