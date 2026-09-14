@@ -1,40 +1,32 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 300" role="img" aria-labelledby="title desc">
-  <title id="title">Green Basket GBG</title>
-  <desc id="desc">Connected GBG monogram representing growth, partnership and progress.</desc>
+  <title id="title">Green Basket Global Limited</title>
+  <desc id="desc">Three green leaves representing growth, connection and progress.</desc>
   <defs>
-    <linearGradient id="green" x1="0" y1="0" x2="1" y2="1">
-      <stop offset="0" stop-color="#075c3d"/>
-      <stop offset="0.55" stop-color="#109447"/>
-      <stop offset="1" stop-color="#78cf19"/>
+    <linearGradient id="leafDark" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#008f3f"/>
+      <stop offset="1" stop-color="#00533d"/>
     </linearGradient>
-    <linearGradient id="lime" x1="0" y1="1" x2="1" y2="0">
-      <stop offset="0" stop-color="#42a914"/>
-      <stop offset="1" stop-color="#a1df20"/>
+    <linearGradient id="leafGreen" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#68c82d"/>
+      <stop offset="1" stop-color="#07934a"/>
     </linearGradient>
-    <linearGradient id="orange" x1="0" y1="0" x2="1" y2="1">
-      <stop offset="0" stop-color="#ffb000"/>
-      <stop offset="1" stop-color="#ff6500"/>
+    <linearGradient id="leafLight" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#9cdb62"/>
+      <stop offset="1" stop-color="#45ad4d"/>
     </linearGradient>
   </defs>
   <rect width="900" height="300" rx="42" fill="#ffffff"/>
-  <!-- Connected GBG monogram: three linked letterforms, no basket -->
-  <g transform="translate(35 38)" stroke-linecap="round" stroke-linejoin="round">
-    <!-- G -->
-    <path d="M205 34H112C62 34 34 64 34 112s28 78 78 78h93v-65h-73" fill="none" stroke="url(#green)" stroke-width="38"/>
-    <!-- B, interlocked with G -->
-    <path d="M198 34v156h72c40 0 62-20 62-50 0-23-12-39-34-46 18-8 27-22 27-42 0-20-17-18-55-18z" fill="none" stroke="url(#green)" stroke-width="38"/>
-    <path d="M198 112h65" stroke="#ffffff" stroke-width="12"/>
-    <!-- G, linked directly into B -->
-    <path d="M515 34h-74c-50 0-78 30-78 78s28 78 78 78h77v-60h-62" fill="none" stroke="url(#lime)" stroke-width="38"/>
-    <!-- Connection bridges -->
-    <path d="M276 112C321 88 347 82 386 88" fill="none" stroke="url(#green)" stroke-width="20"/>
-    <path d="M350 150C394 174 431 178 475 165" fill="none" stroke="url(#green)" stroke-width="20"/>
-    <!-- Growth leaf integrated into first G -->
-    <path d="M73 155c8-36 31-57 65-69-3 29-20 55-55 72z" fill="url(#lime)" stroke="none"/>
-    <path d="M79 151c18-20 35-35 55-48" fill="none" stroke="#ffffff" stroke-width="5" opacity=".9"/>
-    <!-- Progress accent -->
-    <path d="M475 190c27 2 53-5 74-22-7 22-20 40-43 50z" fill="url(#orange)" stroke="none"/>
+  <g transform="translate(45 25)">
+    <!-- Left leaf -->
+    <path d="M115 25C57 26 22 58 24 111c2 58 38 92 104 104 13-64 2-130-13-190z" fill="url(#leafGreen)"/>
+    <path d="M31 39c34 29 67 61 94 101" fill="none" stroke="#74d03a" stroke-width="5" stroke-linecap="round" opacity=".9"/>
+    <!-- Upper-right leaf -->
+    <path d="M225 0C165 10 130 48 129 104c-1 38 10 72 31 98 47-27 77-73 88-126 7-33 6-57-23-76z" fill="url(#leafDark)"/>
+    <path d="M151 179c25-43 50-78 79-111" fill="none" stroke="#78cf32" stroke-width="5" stroke-linecap="round"/>
+    <!-- Lower leaf -->
+    <path d="M96 218c38 19 87 17 132-9 39-23 64-58 76-104-48 13-89 33-122 60-30 24-55 44-86 53z" fill="url(#leafLight)"/>
   </g>
-  <text x="610" y="228" text-anchor="middle" font-family="Arial,sans-serif" font-size="62" font-weight="800" letter-spacing="-2" fill="#075c3d">Green <tspan fill="#55b719">Basket</tspan></text>
-  <text x="610" y="263" text-anchor="middle" font-family="Arial,sans-serif" font-size="13" font-weight="700" letter-spacing="6" fill="#53615a">ALL YOUR BUSINESS NEEDS, ONE PLACE</text>
+  <text x="595" y="122" text-anchor="middle" font-family="Arial,sans-serif" font-size="64" font-weight="800" letter-spacing="-2" fill="#075c3d">Green Basket</text>
+  <text x="595" y="165" text-anchor="middle" font-family="Arial,sans-serif" font-size="26" font-weight="500" letter-spacing="9" fill="#075c3d">GLOBAL LIMITED</text>
+  <text x="595" y="205" text-anchor="middle" font-family="Arial,sans-serif" font-size="18" font-weight="500" fill="#53615a">Practical technology. One place. Built to grow.</text>
 </svg>
