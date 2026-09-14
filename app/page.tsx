@@ -31,7 +31,7 @@ export default function Home() {
               </Link>
             </div>
             <p className="coverage">
-              No account required to explore the demo • Built for private schools
+              Free demo • See a glimpse of the system • Built for private schools
             </p>
           </div>
 
@@ -79,17 +79,18 @@ export default function Home() {
 
       <section className="section trust-section">
         <div className="trust-card">
-          <div className="pill">See it before you decide</div>
+          <div className="pill">See a glimpse. Run your real school.</div>
           <div className="trust-content">
             <div>
-              <h2>Explore the school system yourself.</h2>
+              <h2>Test the school experience with our free demo.</h2>
               <p className="muted">
-                Walk through a prepared demo school and see how the platform can
-                fit into your own school&apos;s daily workflow.
+                The demo gives you a quick look at how Green Basket works. Your
+                real school environment is set up around your own school structure
+                and daily operations, with more available than the demo shows.
               </p>
             </div>
             <Link className="btn" href="/demo">
-              Open live demo <span>→</span>
+              Open free demo <span>→</span>
             </Link>
           </div>
         </div>
