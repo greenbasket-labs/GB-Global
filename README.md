@@ -1,15 +1,34 @@
 # Green Basket Global
 
-Green Basket is a digital services and technology management platform for clients, partners, and company operations.
+Green Basket Global is a digital services and technology management platform for clients, partners, and company operations.
 
-## Stack
+> **Portfolio context:** This repository demonstrates full-stack product engineering across customer workflows, company operations, infrastructure assets, billing, support, and auditability.
+
+## What it demonstrates
+
+- Public service marketplace
+- Client accounts and organizations
+- Service requests and lifecycle management
+- Domains and infrastructure assets
+- Client billing and invoice ledger
+- Client/company support workflows
+- Partner applications and work assignment
+- Company operations and attention center
+- Audit logging
+- Integration with the wider Green Basket / SkulGo product ecosystem
+
+## Architecture
+
+The application is built as a modern full-stack web application with a relational data model and server-side authentication.
+
+### Stack
 
 - Next.js 15
 - React 19
 - TypeScript
 - Prisma 6
 - PostgreSQL
-- bcryptjs
+- Secure session authentication
 
 ## Local development
 
@@ -21,12 +40,14 @@ npm install
 
 ### 2. Configure environment
 
-Copy `.env.example` to `.env` and set:
+Copy `.env.example` to `.env` and configure the required values:
 
-- `DATABASE_URL` — PostgreSQL connection string
-- `SESSION_SECRET` — long random secret for session signing
-- `ADMIN_EMAIL`, `ADMIN_NAME`, `ADMIN_PASSWORD` — used when creating the first company admin
-- `NEXT_PUBLIC_SCHOOL_DEMO_URL` — optional school-system URL used by the public demo page; the live school URL is used as a fallback
+- `DATABASE_URL`
+- `SESSION_SECRET`
+- `ADMIN_EMAIL`
+- `ADMIN_NAME`
+- `ADMIN_PASSWORD`
+- `NEXT_PUBLIC_SCHOOL_DEMO_URL` (optional)
 
 Never commit `.env` or real credentials.
 
@@ -37,8 +58,6 @@ npx prisma generate
 npm run db:push
 npm run db:seed
 ```
-
-`db:push` is the current lightweight V1 database deployment approach. Before introducing a payment gateway or other production-critical database changes, move to a reviewed Prisma migration history.
 
 ### 4. Create the first company admin
 
@@ -61,35 +80,24 @@ npm run build
 npm start
 ```
 
-The production environment must provide a real PostgreSQL `DATABASE_URL` and a strong `SESSION_SECRET`.
+Production environments should provide a real PostgreSQL database and a strong session secret through platform environment variables.
 
-## Deployment notes
+## Product relationship
 
-For a first deployment on a managed platform such as Render:
-
-1. Connect the `greenbasket-labs/GB-Global` GitHub repository.
-2. Use Node.js 22 or a compatible current LTS runtime.
-3. Install with `npm install`.
-4. Build with `npm run build`.
-5. Start with `npm start`.
-6. Configure `DATABASE_URL` and `SESSION_SECRET` as platform environment variables.
-7. Run `npm run db:push` against the production PostgreSQL database before first use.
-8. Run `npm run admin:create` once with the production admin environment variables.
-
-Do not put production credentials in GitHub source files.
+Green Basket Global is the company/platform context around several technology projects. It should not be confused with SkulGo itself: **SkulGo is a school-management product with its own product identity and architecture.**
 
 ## School system demo
 
-The public school-system entry uses `NEXT_PUBLIC_SCHOOL_DEMO_URL` when configured. If the variable is unavailable during a production build, the company site falls back to the live reference school at `https://gb-demo-school.onrender.com`, so the Enter Demo action remains usable.
+The public school-system entry can use `NEXT_PUBLIC_SCHOOL_DEMO_URL`. Keep demo environments separated from real school data.
 
-## V1 areas
+## Deployment
 
-- Public service marketplace
-- Client accounts and organizations
-- Service requests and lifecycle management
-- Domains and infrastructure assets
-- Client billing and invoice ledger
-- Client/company support
-- Partner applications and work assignment
-- Company operations and attention center
-- Audit logging
+The project is designed for managed deployment platforms such as Render. Production configuration belongs in environment variables rather than source control.
+
+## Security note
+
+This is an operational application, so authentication, authorization, database access, secrets, billing, and audit trails should be treated as security-sensitive areas. Do not use real customer credentials or personal data in development fixtures.
+
+## Author
+
+**Mohammed Musbahu Abdullahi**
