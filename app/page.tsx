@@ -1,12 +1,22 @@
 import Link from "next/link";
 
-const highlights = [
-  ["01", "Students & classes", "Keep student records and class information organized."],
-  ["02", "Attendance", "Make daily attendance easier to record and follow."],
-  ["03", "Fees & payments", "Track school fees, payments and outstanding balances."],
-  ["04", "Exams & results", "Manage academic records and results in one place."],
-  ["05", "Staff & announcements", "Keep school staff and important updates connected."],
-  ["06", "School portals", "Give the right people access to the information they need."],
+const services = [
+  ["01", "Software Development", "Custom digital systems and business applications built around practical needs."],
+  ["02", "School Digital Solutions", "Digital school records, results and administrative tools for schools."],
+  ["03", "ICT Support", "Computer, software, printer and general technical support."],
+  ["04", "Digital Records Management", "Helping organizations move from manual records to organized digital workflows."],
+];
+
+const skulgoFeatures = [
+  "Students",
+  "Classes",
+  "Subjects",
+  "Teachers",
+  "Attendance",
+  "CA & Examinations",
+  "Results",
+  "Grades & Rankings",
+  "Report Cards",
 ];
 
 export default function Home() {
@@ -15,23 +25,22 @@ export default function Home() {
       <section className="hero">
         <div className="hero-inner">
           <div className="hero-copy">
-            <div className="eyebrow">GREEN BASKET • FOR PRIVATE SCHOOLS</div>
-            <h1>Run your school from <span>one place.</span></h1>
+            <div className="eyebrow">GREEN BASKET GLOBAL LIMITED • TECHNOLOGY & DIGITAL SOLUTIONS</div>
+            <h1>Practical technology for <span>real-world work.</span></h1>
             <p className="hero-lead">
-              Green Basket School Management System helps private schools organize
-              students, attendance, fees, academics, staff and daily operations
-              with one practical digital platform.
+              We build practical software and provide technology support for
+              businesses, institutions and schools.
             </p>
             <div className="actions">
-              <Link className="btn" href="/demo">
-                Explore the live demo <span>→</span>
-              </Link>
-              <Link className="btn alt" href="/register">
-                Get started
+              <a className="btn" href="#skulgo">
+                Explore SkulGo <span>→</span>
+              </a>
+              <Link className="btn alt" href="/contact">
+                Contact us
               </Link>
             </div>
             <p className="coverage">
-              Free demo • See a glimpse of the system • Built for private schools
+              Software development • Digital records • ICT support
             </p>
           </div>
 
@@ -43,13 +52,13 @@ export default function Home() {
                 <span>GREEN BASKET</span>
                 <span className="panel-dot" />
               </div>
-              <div className="panel-title">School Management System</div>
-              <div className="panel-row"><span>Students</span><b>Organized</b></div>
-              <div className="panel-row"><span>Attendance</span><b>Tracked</b></div>
-              <div className="panel-row"><span>Fees & Payments</span><b>Managed</b></div>
-              <div className="panel-row"><span>Exams & Results</span><b>Connected</b></div>
+              <div className="panel-title">Technology & Digital Solutions</div>
+              <div className="panel-row"><span>Software</span><b>Built</b></div>
+              <div className="panel-row"><span>School Systems</span><b>Supported</b></div>
+              <div className="panel-row"><span>Digital Records</span><b>Organized</b></div>
+              <div className="panel-row"><span>ICT Support</span><b>Available</b></div>
               <div className="panel-footer">
-                One school system. One place. Less paperwork and less to worry about.
+                Practical digital solutions designed around the work people already do.
               </div>
             </div>
           </div>
@@ -58,16 +67,16 @@ export default function Home() {
 
       <section className="section service-section">
         <div className="section-heading">
-          <div className="pill">Everything your school needs</div>
-          <h2>Built around the work schools already do.</h2>
+          <div className="pill">What we do</div>
+          <h2>Technology that solves practical problems.</h2>
           <p className="muted">
-            Instead of juggling separate tools and records, bring the important
-            parts of school administration into one connected system.
+            We focus on useful software, organized records and dependable
+            technology support rather than unnecessary complexity.
           </p>
         </div>
 
         <div className="grid">
-          {highlights.map(([number, title, description]) => (
+          {services.map(([number, title, description]) => (
             <div className="card service-card" key={number}>
               <div className="service-number">{number}</div>
               <h3>{title}</h3>
@@ -77,33 +86,48 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="section trust-section">
+      <section className="section trust-section" id="skulgo">
         <div className="trust-card">
-          <div className="pill">See a glimpse. Run your real school.</div>
+          <div className="pill">Our school technology</div>
           <div className="trust-content">
             <div>
-              <h2>Test the school experience with our free demo.</h2>
+              <h2>SkulGo App — free school-record management.</h2>
               <p className="muted">
-                The demo gives you a quick look at how Green Basket works. Your
-                real school environment is set up around your own school structure
-                and daily operations, with more available than the demo shows.
+                SkulGo App helps schools manage important records without
+                requiring constant internet connectivity for normal school
+                operations. The core application is provided without a software
+                licensing fee.
               </p>
+              <div className="actions" style={{ marginTop: 20 }}>
+                <a
+                  className="btn"
+                  href="https://greenbasket-labs.github.io/skulgo-app/"
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  Open SkulGo App <span>↗</span>
+                </a>
+              </div>
             </div>
-            <Link className="btn" href="/demo">
-              Open free demo <span>→</span>
-            </Link>
+            <div className="grid" style={{ marginTop: 0, width: "100%", gridTemplateColumns: "repeat(3, 1fr)" }}>
+              {skulgoFeatures.map((feature) => (
+                <div key={feature} style={{ color: "#dce8e1", fontSize: 12, fontWeight: 700 }}>
+                  ✓ {feature}
+                </div>
+              ))}
+            </div>
           </div>
         </div>
       </section>
 
       <section className="section">
         <div className="section-heading">
-          <div className="pill">Why Green Basket</div>
-          <h2>Simple for the school. Connected behind the scenes.</h2>
+          <div className="pill">Flexible support</div>
+          <h2>Part-time and contract technology support.</h2>
           <p className="muted">
-            Start with the school management system you need today. Green Basket
-            provides the platform, support and ongoing service management so your
-            school can focus on running its work.
+            Schools and organizations can engage Green Basket Global Limited for
+            technical support, setup, training, maintenance and other agreed
+            digital services.
           </p>
         </div>
 
@@ -111,34 +135,45 @@ export default function Home() {
           <div className="card service-card">
             <div className="service-number">01</div>
             <h3>Practical</h3>
-            <p className="muted">Designed around real school administration, not unnecessary complexity.</p>
+            <p className="muted">Solutions designed around the organization's actual workflow.</p>
           </div>
           <div className="card service-card">
             <div className="service-number">02</div>
-            <h3>Supported</h3>
-            <p className="muted">Get help with setup and ongoing use instead of being left alone with software.</p>
+            <h3>Flexible</h3>
+            <p className="muted">Support can be arranged on a part-time or contract basis.</p>
           </div>
           <div className="card service-card">
             <div className="service-number">03</div>
-            <h3>Ready to grow</h3>
-            <p className="muted">The Green Basket platform is built to support additional digital services in the future.</p>
+            <h3>Supported</h3>
+            <p className="muted">Setup, training and ongoing technical assistance can be agreed separately.</p>
           </div>
         </div>
       </section>
 
-      <section className="section closing-section">
+      <section className="section">
         <div className="closing-card">
           <div>
-            <div className="pill">For private school owners & administrators</div>
-            <h2>Ready to see what your school can do with one system?</h2>
+            <div className="pill">About Green Basket Global Limited</div>
+            <h2>Technology and digital services from a Nigerian company.</h2>
             <p className="muted">
-              Start with the live demo, then create an account when you are ready
-              to talk to Green Basket about your school.
+              Green Basket Global Limited provides software development and
+              digital technology services for businesses, institutions and
+              schools.
+            </p>
+            <p className="muted">
+              <strong>CAC Registration No. 9085329</strong>
             </p>
           </div>
           <div className="actions" style={{ marginTop: 0 }}>
-            <Link className="btn" href="/demo">Try the demo <span>→</span></Link>
-            <Link className="btn alt" href="/contact">Contact us</Link>
+            <Link className="btn" href="/contact">Contact us <span>→</span></Link>
+            <a
+              className="btn alt"
+              href="https://greenbasket-labs.github.io/skulgo-app/"
+              target="_blank"
+              rel="noreferrer"
+            >
+              SkulGo App <span>↗</span>
+            </a>
           </div>
         </div>
       </section>
